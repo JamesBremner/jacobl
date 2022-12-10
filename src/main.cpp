@@ -6,26 +6,11 @@
 #include <algorithm>
 #include <wex.h>
 #include "cStarterGUI.h"
+#include "cStategy.h"
 
-class cStrategyResults
-{
-public:
-    void read(const std::string &fname);
+std::vector<cStrategy> cStrategy::theStrategy;
 
-    std::string text() const;
-
-private:
-    std::string myName;
-    std::vector<std::pair<std::string, float>> myResult;
-
-    void parse(const std::string &line);
-
-    void add(
-        const std::string &date,
-        float value);
-};
-
-void cStrategyResults::read(const std::string &fname)
+void cStrategy::read(const std::string &fname)
 {
     std::ifstream ifs(fname);
     if (!ifs.is_open())
@@ -38,8 +23,33 @@ void cStrategyResults::read(const std::string &fname)
     {
         parse(line);
     }
+    rank();
+    theStrategy.push_back(*this);
 }
-void cStrategyResults::parse(const std::string &line)
+
+void cStrategy::rank()
+{
+    myMaxLoss = 0;
+    myProfit = 0;
+    for (auto &r : myResult)
+    {
+        // profit is the total of profits and losses for every day
+        myProfit += r.second;
+
+        // max loss is the largest loss on any one day
+        if( r.second < myMaxLoss)
+            myMaxLoss = r.second;
+    }
+
+    // rank is total profit if no loss occurred on any one day
+    // if losses do occurr, 
+    //    rank is the total profit divided by the absolute value
+    //    of the largest loss on a single day
+    myRank = myProfit;
+    if( myMaxLoss < 0 )
+        myRank /= -myMaxLoss;
+}
+void cStrategy::parse(const std::string &line)
 {
     std::string date, result;
     int p = line.find(",");
@@ -57,7 +67,7 @@ void cStrategyResults::parse(const std::string &line)
     // std::cout << date << " " << value << "\n";
 }
 
-void cStrategyResults::add(
+void cStrategy::add(
     const std::string &date,
     float value)
 {
@@ -76,13 +86,21 @@ void cStrategyResults::add(
         prev.second += value;
 }
 
-std::string cStrategyResults::text() const
+std::string cStrategy::text() const
 {
     std::stringstream ss;
-    ss << myName << "\r\n";
-    for (auto &p : myResult)
+    for (auto &S : theStrategy)
     {
-        ss << p.first << "  |  " << p.second << "\r\n";
+
+        ss << S.myName << "\r\n";
+        for (auto &p : S.myResult)
+        {
+            ss << p.first << "  |  " << p.second << "\r\n";
+        }
+
+        ss << "Profit " << S.myProfit << "\r\n";
+        ss << "Max Loss " << S.myMaxLoss << "\r\n";
+        ss << "Rank " << S.myRank << "\r\n\r\n";
     }
     return ss.str();
 }
@@ -96,6 +114,7 @@ public:
               {50, 50, 1000, 500}),
           lb(wex::maker::make<wex::multiline>(fm))
     {
+        mySR.read("../dat/StrategyA.csv");
         mySR.read("../dat/StrategyB.csv");
         std::cout << mySR.text();
 
@@ -109,7 +128,7 @@ public:
 
 private:
     wex::multiline &lb;
-    cStrategyResults mySR;
+    cStrategy mySR;
 };
 
 main()
