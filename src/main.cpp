@@ -23,11 +23,12 @@ void cStrategy::read(const std::string &fname)
     {
         parse(line);
     }
-    rank();
+    rankCalc();
     theStrategy.push_back(*this);
+    rankOrder();
 }
 
-void cStrategy::rank()
+void cStrategy::rankCalc()
 {
     myMaxLoss = 0;
     myProfit = 0;
@@ -37,18 +38,31 @@ void cStrategy::rank()
         myProfit += r.second;
 
         // max loss is the largest loss on any one day
-        if( r.second < myMaxLoss)
+        if (r.second < myMaxLoss)
             myMaxLoss = r.second;
     }
 
     // rank is total profit if no loss occurred on any one day
-    // if losses do occurr, 
+    // if losses do occurr,
     //    rank is the total profit divided by the absolute value
     //    of the largest loss on a single day
     myRank = myProfit;
-    if( myMaxLoss < 0 )
+    if (myMaxLoss < 0)
         myRank /= -myMaxLoss;
 }
+void cStrategy::rankOrder()
+{
+    std::sort(
+        theStrategy.begin(),
+        theStrategy.end(),
+        [](
+            const cStrategy &a,
+            const cStrategy &b)
+        {
+            return a.rank() < b.rank();
+        });
+}
+
 void cStrategy::parse(const std::string &line)
 {
     std::string date, result;
@@ -105,6 +119,20 @@ std::string cStrategy::text() const
     return ss.str();
 }
 
+std::string cStrategy::textSummary() const
+{
+
+    std::stringstream ss;
+    for (auto &S : theStrategy)
+    {
+        ss << S.myName << "\r\n";
+        ss << "Profit " << S.myProfit << "\r\n";
+        ss << "Max Loss " << S.myMaxLoss << "\r\n";
+        ss << "Rank " << S.myRank << "\r\n\r\n";
+    }
+    return ss.str();
+}
+
 class cGUI : public cStarterGUI
 {
 public:
@@ -119,7 +147,7 @@ public:
         std::cout << mySR.text();
 
         lb.move(10, 10, 900, 450);
-        lb.text(mySR.text());
+        lb.text(mySR.textSummary());
         lb.fontHeight(20);
 
         show();

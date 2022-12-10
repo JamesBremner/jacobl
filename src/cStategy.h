@@ -4,6 +4,7 @@ public:
     void read(const std::string &fname);
 
     std::string text() const;
+    std::string textSummary() const;
 
 private:
     std::string myName;
@@ -19,5 +20,10 @@ private:
         const std::string &date,
         float value);
 
-    void rank();
+    float rank() const
+    {
+        return myRank;
+    }
+    void rankCalc();
+    void rankOrder();
 };
