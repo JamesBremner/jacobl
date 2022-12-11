@@ -26,17 +26,18 @@ CCflags = -std=c++17 $(OPT) -D_mingw_
 
 # sources
 OBJ_starter = \
-	$(ODIR)/main.o 
+	$(ODIR)/main.o \
+	$(ODIR)/cStrategy.o \
 
 ### COMPILE
 
-$(ODIR)/%.o: %.cpp  
+$(ODIR)/%.o: %.cpp cStrategy.h
 	g++  $(CCflags) \
 	-c -o $@ $< $(INCS)
 
 starter: $(OBJ_starter)
-	g++ $(OPT) \
-	-o bin/starter.exe $^  \
+	g++ -o bin/strategy.exe \
+	$(OPT) $^  \
 	$(static_link_flags) $(LIBS)
 
 .PHONY: clean
