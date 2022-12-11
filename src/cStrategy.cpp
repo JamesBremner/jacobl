@@ -125,61 +125,57 @@ void cStrategy::combine(const cStrategy &other)
         return;
     }
 
+    // combine names
     myName += "+" + other.myName;
+
+    // temp storage of combined results
+    // ( so insertions do not invalidate iterators )
     std::vector<sResult> comb;
+
+    //loop while uncombine results remain
     int I = 0;
     int otherI = 0;
-    while (I >= 0 || otherI > 0)
+    while ( 1 )
     {
         if (myResult[I].ymd == other.myResult[otherI].ymd)
         {
             // same day - sum profits
 
-            // std::cout << "combining " << myResult[I].sdate
-            //     << " and " << other.myResult[otherI].sdate << "\n";
-
             myResult[I].profit += other.myResult[otherI].profit;
             comb.push_back(myResult[I]);
 
-            if (I >= 0)
-                I++;
-            if (I >= myResult.size())
-                I = -1;
-            if (otherI >= 0)
-                otherI++;
-            if (otherI >= other.myResult.size())
-                otherI = -1;
+            I++;
+            otherI++;
         }
         else if (myResult[I].ymd < other.myResult[otherI].ymd)
         {
+            // no date match - insert from other
             comb.push_back(myResult[I]);
-            if (I >= 0)
-                I++;
-            if (I >= myResult.size())
-                I = -1;
+            I++;
         }
         else
         {
+            // no date match - insert from this
             comb.push_back(other.myResult[otherI]);
-            if (otherI >= 0)
-                otherI++;
-            if (otherI >= other.myResult.size())
-                otherI = -1;
+            otherI++;
         }
-        if (I == -1)
+        if (I == myResult.size() )
         {
+            // this exhausted - add remaining other
             for (int k = otherI; k < other.myResult.size(); k++)
                 comb.push_back(other.myResult[k]);
             break;
         }
-        if (otherI == -1)
+        if (otherI == other.myResult.size() )
         {
+            // other exhausted - add remaining this
             for (int k = I; k < other.myResult.size(); k++)
                 comb.push_back(other.myResult[k]);
             break;
         }
     }
 
+    // update with combined results
     myResult = comb;
 }
 
