@@ -28,10 +28,11 @@ CCflags = -std=c++17 $(OPT) -D_mingw_
 OBJ_starter = \
 	$(ODIR)/main.o \
 	$(ODIR)/cStrategy.o \
+	$(ODIR)/cGUI.o \
 
 ### COMPILE
 
-$(ODIR)/%.o: %.cpp cStrategy.h
+$(ODIR)/%.o: %.cpp cStrategy.h cGUI.h
 	g++  $(CCflags) \
 	-c -o $@ $< $(INCS)
 

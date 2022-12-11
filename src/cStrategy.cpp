@@ -192,8 +192,6 @@ void cStrategy::combine(
     comb.rankCalc();
 
     theStrategy.push_back(comb);
-
-    rankOrder();
 }
 
 void cStrategy::combine()
@@ -219,6 +217,21 @@ std::string cStrategy::text() const
             ss << p.sdate << "  |  " << p.profit << "\r\n";
         }
 
+        ss << "Profit " << S.myProfit << "\r\n";
+        ss << "Max Loss " << S.myMaxLoss << "\r\n";
+        ss << "Rank " << S.myRank << "\r\n\r\n";
+    }
+    return ss.str();
+}
+
+
+std::string cStrategy::textSummary() const
+{
+
+    std::stringstream ss;
+    for (auto &S : theStrategy)
+    {
+        ss << S.myName << "\r\n";
         ss << "Profit " << S.myProfit << "\r\n";
         ss << "Max Loss " << S.myMaxLoss << "\r\n";
         ss << "Rank " << S.myRank << "\r\n\r\n";
