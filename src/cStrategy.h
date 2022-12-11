@@ -2,6 +2,8 @@ class cStrategy
 {
 public:
 
+    void clear();
+
     void combine();
     
     void read(const std::string &fname);

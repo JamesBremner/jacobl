@@ -8,6 +8,11 @@
 
 std::vector<cStrategy> cStrategy::theStrategy;
 
+void cStrategy::clear()
+{
+    theStrategy.clear();
+}
+
 void cStrategy::read(const std::string &fname)
 {
     std::ifstream ifs(fname);

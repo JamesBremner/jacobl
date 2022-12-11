@@ -70,4 +70,6 @@ public:
 private:
     wex::multiline &lb;
     cStrategy mySR;
+
+    void constructMenu();
 };
