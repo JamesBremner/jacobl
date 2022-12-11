@@ -14,15 +14,17 @@ void cStrategy::read(const std::string &fname)
     if (!ifs.is_open())
         throw std::runtime_error(
             "Cannot open " + fname);
+
+    theStrategy.push_back( cStrategy());
+
     std::string line;
     getline(ifs, line);
-    myName = line;
+    theStrategy.back().myName = line;
     while (getline(ifs, line))
     {
-        parse(line);
+        theStrategy.back().parse(line);
     }
-    rankCalc();
-    theStrategy.push_back(*this);
+    theStrategy.back().rankCalc();
     rankOrder();
 }
 
@@ -30,7 +32,7 @@ void cStrategy::parse(const std::string &line)
 {
     std::string date, result;
     int p = line.find(",");
-    date = line.substr(0, p - 1);
+    date = line.substr(0, p);
     result = line.substr(p + 1);
     p = result.find_first_not_of("$ ");
     result = result.substr(p);
@@ -110,7 +112,7 @@ void cStrategy::rankOrder()
             const cStrategy &a,
             const cStrategy &b)
         {
-            return a.rank() < b.rank();
+            return a.rank() > b.rank();
         });
 }
 
@@ -132,6 +134,10 @@ void cStrategy::combine(const cStrategy &other)
         if (myResult[I].ymd == other.myResult[otherI].ymd)
         {
             // same day - sum profits
+
+            // std::cout << "combining " << myResult[I].sdate
+            //     << " and " << other.myResult[otherI].sdate << "\n";
+
             myResult[I].profit += other.myResult[otherI].profit;
             comb.push_back(myResult[I]);
 
@@ -154,17 +160,27 @@ void cStrategy::combine(const cStrategy &other)
         }
         else
         {
-            comb.push_back(myResult[otherI]);
+            comb.push_back(other.myResult[otherI]);
             if (otherI >= 0)
                 otherI++;
             if (otherI >= other.myResult.size())
                 otherI = -1;
         }
+        if (I == -1)
+        {
+            for (int k = otherI; k < other.myResult.size(); k++)
+                comb.push_back(other.myResult[k]);
+            break;
+        }
+        if (otherI == -1)
+        {
+            for (int k = I; k < other.myResult.size(); k++)
+                comb.push_back(other.myResult[k]);
+            break;
+        }
     }
 
     myResult = comb;
-
-    rankCalc();
 }
 
 void cStrategy::combine(
@@ -176,7 +192,12 @@ void cStrategy::combine(
     {
         comb.combine(S);
     }
+    
+    comb.rankCalc();
+
     theStrategy.push_back(comb);
+
+    rankOrder();
 }
 
 void cStrategy::combine()
