@@ -14,5 +14,8 @@ Strategy B
 ```
 
 - Parses the files and combines results from a single day
+- Combines strategies
+- Ranks strategies, original and combined, by total profit divided by maximum day loss if any
+- Displays stategies, original and combined, in descending rank order
 
-![image](https://user-images.githubusercontent.com/2046227/206865483-bd2caacd-d7c9-45db-acd8-8c7a5bdbddc1.png)
+![image](https://user-images.githubusercontent.com/2046227/207102579-1fa4baef-b1cd-4a42-807e-b6f1e3d7c66d.png)
