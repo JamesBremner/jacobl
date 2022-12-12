@@ -188,21 +188,6 @@ void cStrategy::combine(const cStrategy &other)
     myResult = comb;
 }
 
-void cStrategy::combine(
-    std::vector<cStrategy> vs)
-{
-    cStrategy comb;
-
-    for (auto &S : vs)
-    {
-        comb.combine(S);
-    }
-
-    comb.rankCalc();
-
-    theStrategy.push_back(comb);
-}
-
 void cStrategy::combine()
 {
     std::vector< cStrategy > newComb;

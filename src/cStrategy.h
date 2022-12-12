@@ -4,6 +4,13 @@ public:
 
     void clear();
 
+    /**
+     * @brief Combine strategies
+     * 
+     * Combine the strategy in the last position
+     * ( assumed to be a new original single strategy )
+     * with each of the other strategies, original and combined
+     */
     void combine();
     
     void read(const std::string &fname);
@@ -49,12 +56,7 @@ private:
 
     void rankCalc();
     void rankOrder();
-
-    /// @brief combine strategies
-    /// @param vs vector of strategies to combine
-    void combine(
-        std::vector< cStrategy > vs    );
-    
+  
     /// @brief combine this strategy with another
     /// @param other 
     void combine( const cStrategy& other );
