@@ -2,7 +2,7 @@
 
 An application for optimizing the combination of Jacob L's strategies.
 
-- Reads input files containging strategy results.  e.g.
+- Reads input files containing strategy results.  e.g.
 
 ```
 Strategy B
@@ -13,9 +13,12 @@ Strategy B
 1/5/2022,$ 365.25
 ```
 
+- Files can be selected one by one using `File | Open` menu item.
+- File groups can be selected by dragging and dropping from file explorer.
 - Parses the files and combines results from a single day
 - Combines strategies
 - Ranks strategies, original and combined, by total profit divided by maximum day loss if any
 - Displays stategies, original and combined, in descending rank order
+- Start fresh with `File new` menu item
 
-![image](https://user-images.githubusercontent.com/2046227/207102579-1fa4baef-b1cd-4a42-807e-b6f1e3d7c66d.png)
+![image](https://user-images.githubusercontent.com/2046227/207142083-3d356f64-73ae-4ef9-81ad-3890a447e4bc.png)
