@@ -41,7 +41,7 @@ private:
     float myMaxLoss;
     float myRank;
     static std::vector<cStrategy> theStrategy;
-    static std::vector<cStrategy> theStrategyRankOrder;
+    std::vector<int> theRankOrder;
 
     void parse(const std::string &line);
 

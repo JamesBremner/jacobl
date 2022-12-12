@@ -8,7 +8,6 @@
 #include "cStrategy.h"
 
 std::vector<cStrategy> cStrategy::theStrategy;
-std::vector<cStrategy> cStrategy::theStrategyRankOrder;
 
 void cStrategy::clear()
 {
@@ -22,6 +21,10 @@ void cStrategy::read(const std::string &fname)
         throw std::runtime_error(
             "Cannot open " + fname);
 
+    if (theStrategy.size() > 3)
+        throw std::runtime_error(
+            " !!!!!!!!!!! Evaluation limit reached  !!!!!!!!!!!!");
+
     theStrategy.push_back(cStrategy());
 
     std::string line;
@@ -32,7 +35,6 @@ void cStrategy::read(const std::string &fname)
         theStrategy.back().parse(line);
     }
     theStrategy.back().rankCalc();
-    rankOrder();
 }
 
 void cStrategy::parse(const std::string &line)
@@ -112,17 +114,25 @@ void cStrategy::rankCalc()
 
 void cStrategy::rankOrder()
 {
-    theStrategyRankOrder = theStrategy;
+    std::vector<std::pair<double, int > > vpair;
+    int i = 0;
+    for( auto& st : theStrategy)
+        vpair.push_back( std::make_pair( st.rank(), i++ ));
 
     std::sort(
-        theStrategyRankOrder.begin(),
-        theStrategyRankOrder.end(),
+        vpair.begin(),
+        vpair.end(),
         [](
-            const cStrategy &a,
-            const cStrategy &b)
+            const std::pair<double, int > &a,
+            const std::pair<double, int > &b)
         {
-            return a.rank() > b.rank();
+            return a.first > b.first;
         });
+
+    theRankOrder.clear();
+    for( auto& p : vpair )
+        theRankOrder.push_back( p.second );
+
 }
 
 void cStrategy::combine(const cStrategy &other)
@@ -190,19 +200,31 @@ void cStrategy::combine(const cStrategy &other)
 
 void cStrategy::combine()
 {
-    std::vector< cStrategy > newComb;
-    for( int k = 0; k < theStrategy.size()-1; k++ )
+    // store new combinations
+    std::vector<cStrategy> newComb;
+
+    // loop over previous strategies
+    for (int k = 0; k < theStrategy.size() - 1; k++)
     {
-        cStrategy comb = theStrategy[k];;
-        comb.combine( theStrategy.back() );
+        // new combination, starting with prevous strategy
+        cStrategy comb = theStrategy[k];
+
+        // combine previous and latest
+        comb.combine(theStrategy.back());
+
+        // calculate rank
         comb.rankCalc();
+
+        // add to new combinations
         newComb.push_back(comb);
     }
 
+    // add new combinations to strategies
     theStrategy.insert(
         theStrategy.end(),
-        newComb.begin(), newComb.end()     );
+        newComb.begin(), newComb.end());
 
+    // sort into rank order
     rankOrder();
 }
 
@@ -228,12 +250,13 @@ std::string cStrategy::text() const
 std::string cStrategy::textSummary() const
 {
     std::stringstream ss;
-    for (auto &S : theStrategyRankOrder)
+    for (int i : theRankOrder)
     {
+        auto& S = theStrategy[i];
         ss << "Profit " << std::setw(10) << S.myProfit << ", ";
         ss << "Max Loss " << std::setw(10) << S.myMaxLoss << ", ";
         ss << "Rank " << std::setw(10) << S.myRank << "  ";
-        ss <<  S.myName<< "\r\n";
+        ss << S.myName << "\r\n";
     }
     return ss.str();
 }

@@ -10,7 +10,7 @@
 
 cGUI::cGUI()
     : cStarterGUI(
-          "Jacob's Strategy Combiner",
+          "Jacob's Strategy Combiner : Evaluation Version",
           {50, 50, 1200, 500}),
       lb(wex::maker::make<wex::multiline>(fm))
 {
