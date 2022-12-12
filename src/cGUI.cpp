@@ -12,14 +12,39 @@ cGUI::cGUI()
     : cStarterGUI(
           "Jacob's Strategy Combiner : Evaluation Version",
           {50, 50, 1200, 500}),
+      dropper(wex::maker::make<wex::drop>(fm)),
+      droplabel(wex::maker::make<wex::label>(dropper)),
       lb(wex::maker::make<wex::multiline>(fm))
 {
     constructMenu();
 
-    lb.move(10, 10, 1100, 450);
+    // widget for receiving dropped files
+    dropper.move(10, 10, 490, 70);
+    droplabel.move(30, 30, 400, 50);
+    droplabel.text("Drop strategy files here");
+
+    // strategy display
+    lb.move(10, 100, 1100, 450);
     lb.fontHeight(18);
     lb.fontName("courier");
     lb.text("");
+
+    // dropped files event handler
+    dropper.events().drop(
+        [&](const std::vector<std::string> &files)
+        {
+            // loop over dropped files
+            for (auto &f : files)
+            {
+                // read file
+                mySR.read(f);
+
+                // combine with previous
+                mySR.combine();
+            }
+            lb.text(mySR.textSummary());
+            fm.update();
+        });
 
     show();
     run();

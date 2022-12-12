@@ -68,6 +68,8 @@ public:
     cGUI();
 
 private:
+    wex::drop& dropper;
+    wex::label& droplabel;
     wex::multiline &lb;
     cStrategy mySR;
 
