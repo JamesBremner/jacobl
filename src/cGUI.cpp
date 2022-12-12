@@ -11,13 +11,14 @@
 cGUI::cGUI()
     : cStarterGUI(
           "Jacob's Strategy Combiner",
-          {50, 50, 1000, 500}),
+          {50, 50, 1200, 500}),
       lb(wex::maker::make<wex::multiline>(fm))
 {
     constructMenu();
 
-    lb.move(10, 10, 900, 450);
-    lb.fontHeight(20);
+    lb.move(10, 10, 1100, 450);
+    lb.fontHeight(18);
+    lb.fontName("courier");
     lb.text("");
 
     show();
@@ -43,7 +44,7 @@ void cGUI::constructMenu()
                      {
                          mySR.read(fb.open());
                          mySR.combine();
-                             lb.text(mySR.textSummary());
+                         lb.text(mySR.textSummary());
                          fm.update();
                      }
                      catch (std::runtime_error &e)

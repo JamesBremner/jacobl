@@ -34,6 +34,7 @@ private:
     float myMaxLoss;
     float myRank;
     static std::vector<cStrategy> theStrategy;
+    static std::vector<cStrategy> theStrategyRankOrder;
 
     void parse(const std::string &line);
 
@@ -50,7 +51,7 @@ private:
     void rankOrder();
 
     /// @brief combine strategies
-    /// @param vs vector of strategis to combine
+    /// @param vs vector of strategies to combine
     void combine(
         std::vector< cStrategy > vs    );
     

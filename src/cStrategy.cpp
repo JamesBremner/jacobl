@@ -1,4 +1,5 @@
 #include <string>
+#include <iomanip>
 #include <fstream>
 #include <sstream>
 #include <iostream>
@@ -7,6 +8,7 @@
 #include "cStrategy.h"
 
 std::vector<cStrategy> cStrategy::theStrategy;
+std::vector<cStrategy> cStrategy::theStrategyRankOrder;
 
 void cStrategy::clear()
 {
@@ -20,7 +22,7 @@ void cStrategy::read(const std::string &fname)
         throw std::runtime_error(
             "Cannot open " + fname);
 
-    theStrategy.push_back( cStrategy());
+    theStrategy.push_back(cStrategy());
 
     std::string line;
     getline(ifs, line);
@@ -110,9 +112,11 @@ void cStrategy::rankCalc()
 
 void cStrategy::rankOrder()
 {
+    theStrategyRankOrder = theStrategy;
+
     std::sort(
-        theStrategy.begin(),
-        theStrategy.end(),
+        theStrategyRankOrder.begin(),
+        theStrategyRankOrder.end(),
         [](
             const cStrategy &a,
             const cStrategy &b)
@@ -137,10 +141,10 @@ void cStrategy::combine(const cStrategy &other)
     // ( so insertions do not invalidate iterators )
     std::vector<sResult> comb;
 
-    //loop while uncombine results remain
+    // loop while uncombine results remain
     int I = 0;
     int otherI = 0;
-    while ( 1 )
+    while (1)
     {
         if (myResult[I].ymd == other.myResult[otherI].ymd)
         {
@@ -164,14 +168,14 @@ void cStrategy::combine(const cStrategy &other)
             comb.push_back(other.myResult[otherI]);
             otherI++;
         }
-        if (I == myResult.size() )
+        if (I == myResult.size())
         {
             // this exhausted - add remaining other
             for (int k = otherI; k < other.myResult.size(); k++)
                 comb.push_back(other.myResult[k]);
             break;
         }
-        if (otherI == other.myResult.size() )
+        if (otherI == other.myResult.size())
         {
             // other exhausted - add remaining this
             for (int k = I; k < other.myResult.size(); k++)
@@ -193,7 +197,7 @@ void cStrategy::combine(
     {
         comb.combine(S);
     }
-    
+
     comb.rankCalc();
 
     theStrategy.push_back(comb);
@@ -201,12 +205,19 @@ void cStrategy::combine(
 
 void cStrategy::combine()
 {
-    int uncombinedCount = theStrategy.size();
-    for (int ka = 0; ka < uncombinedCount; ka++)
-        for (int kb = ka + 1; kb < uncombinedCount; kb++)
-        {
-            combine({theStrategy[ka], theStrategy[kb]});
-        }
+    std::vector< cStrategy > newComb;
+    for( int k = 0; k < theStrategy.size()-1; k++ )
+    {
+        cStrategy comb = theStrategy[k];;
+        comb.combine( theStrategy.back() );
+        comb.rankCalc();
+        newComb.push_back(comb);
+    }
+
+    theStrategy.insert(
+        theStrategy.end(),
+        newComb.begin(), newComb.end()     );
+
     rankOrder();
 }
 
@@ -229,17 +240,15 @@ std::string cStrategy::text() const
     return ss.str();
 }
 
-
 std::string cStrategy::textSummary() const
 {
-
     std::stringstream ss;
-    for (auto &S : theStrategy)
+    for (auto &S : theStrategyRankOrder)
     {
-        ss << S.myName << "\r\n";
-        ss << "Profit " << S.myProfit << "\r\n";
-        ss << "Max Loss " << S.myMaxLoss << "\r\n";
-        ss << "Rank " << S.myRank << "\r\n\r\n";
+        ss << "Profit " << std::setw(10) << S.myProfit << ", ";
+        ss << "Max Loss " << std::setw(10) << S.myMaxLoss << ", ";
+        ss << "Rank " << std::setw(10) << S.myRank << "  ";
+        ss <<  S.myName<< "\r\n";
     }
     return ss.str();
 }
