@@ -71,6 +71,8 @@ private:
     wex::drop& dropper;
     wex::label& droplabel;
     wex::multiline &lb;
+    wex::label& lbDateRange;
+    wex::editbox& ebDateRange;
     cStrategy mySR;
 
     void constructMenu();

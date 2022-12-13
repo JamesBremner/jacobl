@@ -253,9 +253,10 @@ std::string cStrategy::textSummary() const
     for (int i : theRankOrder)
     {
         auto& S = theStrategy[i];
-        ss << "Profit " << std::setw(10) << S.myProfit << ", ";
-        ss << "Max Loss " << std::setw(10) << S.myMaxLoss << ", ";
-        ss << "Rank " << std::setw(10) << S.myRank << "  ";
+        ss << std::setprecision(2) << std::fixed;
+        ss << "Profit " << std::setw(8) << S.myProfit << ",  ";
+        ss << "Max Loss " << std::setw(8) << S.myMaxLoss << ",  ";
+        ss << "Rank " << std::setw(8) << S.myRank << "   ";
         ss << S.myName << "\r\n";
     }
     return ss.str();

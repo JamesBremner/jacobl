@@ -14,14 +14,22 @@ cGUI::cGUI()
           {50, 50, 1200, 500}),
       dropper(wex::maker::make<wex::drop>(fm)),
       droplabel(wex::maker::make<wex::label>(dropper)),
-      lb(wex::maker::make<wex::multiline>(fm))
+      lb(wex::maker::make<wex::multiline>(fm)),
+      lbDateRange(wex::maker::make<wex::label>(fm)),
+      ebDateRange(wex::maker::make<wex::editbox>(fm))
 {
     constructMenu();
 
     // widget for receiving dropped files
     dropper.move(10, 10, 490, 70);
     droplabel.move(30, 30, 400, 50);
+    droplabel.fontHeight(28);
     droplabel.text("Drop strategy files here");
+
+    lbDateRange.move(550, 30, 100, 30);
+    lbDateRange.text("Dates");
+    ebDateRange.move(665, 30, 200, 30);
+    ebDateRange.text("ALL");
 
     // strategy display
     lb.move(10, 100, 1100, 450);
@@ -67,8 +75,14 @@ void cGUI::constructMenu()
 
                      try
                      {
-                         mySR.read(fb.open());
-                         mySR.combine();
+                         for (auto &f : fb.openMulti())
+                         {
+                             // read file
+                             mySR.read(f);
+
+                             // combine with previous
+                             mySR.combine();
+                         }
                          lb.text(mySR.textSummary());
                          fm.update();
                      }

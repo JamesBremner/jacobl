@@ -3,9 +3,11 @@ VPATH = ./src
 
 	# compiler include search paths
 INCS = -I./include \
-	-I../ravencode/pub/src \
+	-I../windex/include \
 	-I../raven-set \
 	-I../boost/boost1_78 
+
+# 	-I../ravencode/pub/src
 
 LIBS = \
 	-lgdiplus -lgdi32 -lcomdlg32 -lstdc++fs \
