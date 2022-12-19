@@ -1,7 +1,7 @@
 #source file search paths
 VPATH = ./src 
 
-	# compiler include search paths
+# compiler include search paths
 INCS = -I./include \
 	-I../windex/include \
 	-I../raven-set \
@@ -10,10 +10,8 @@ INCS = -I./include \
 # 	-I../ravencode/pub/src
 
 LIBS = \
-	-lgdiplus -lgdi32 -lcomdlg32 -lstdc++fs \
-	-L../boost/boost1_78/lib \
-		-lboost_system-mgw11-mt-x64-1_78 \
-	-mwindows
+	-lgdiplus -lgdi32 -lcomdlg32 -lstdc++fs -lComctl32 \
+#	-mwindows
 
 static_link_flags = -static-libstdc++ -static-libgcc -static
 
@@ -44,4 +42,6 @@ starter: $(OBJ_starter)
 .PHONY: clean
 clean:
 	del /q .vscode\\obj\\*.o
+
+rebuild: clean starter
 

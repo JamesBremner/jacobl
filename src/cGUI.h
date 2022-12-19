@@ -72,8 +72,11 @@ private:
     wex::label& droplabel;
     wex::multiline &lb;
     wex::label& lbDateRange;
-    wex::editbox& ebDateRange;
+    wex::label& lbDateRange2;
+    wex::datebox& dbDateStart;
+    wex::datebox& dbDateEnd;
     cStrategy mySR;
 
     void constructMenu();
+    void constructDatePicker();
 };

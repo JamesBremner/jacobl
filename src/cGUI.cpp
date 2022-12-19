@@ -8,6 +8,11 @@
 #include <wex.h>
 #include "cGUI.h"
 
+#include "commctrl.h"
+
+// Not sure what this does.  More info at https://stackoverflow.com/a/33125299/16582
+#pragma comment(linker, "/manifestdependency:\"type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
+
 cGUI::cGUI()
     : cStarterGUI(
           "Jacob's Strategy Combiner : Evaluation Version",
@@ -16,9 +21,12 @@ cGUI::cGUI()
       droplabel(wex::maker::make<wex::label>(dropper)),
       lb(wex::maker::make<wex::multiline>(fm)),
       lbDateRange(wex::maker::make<wex::label>(fm)),
-      ebDateRange(wex::maker::make<wex::editbox>(fm))
+      lbDateRange2(wex::maker::make<wex::label>(fm)),
+      dbDateStart(wex::maker::make<wex::datebox>(fm)),
+      dbDateEnd(wex::maker::make<wex::datebox>(fm))
 {
     constructMenu();
+    constructDatePicker();
 
     // widget for receiving dropped files
     dropper.move(10, 10, 490, 70);
@@ -26,10 +34,12 @@ cGUI::cGUI()
     droplabel.fontHeight(28);
     droplabel.text("Drop strategy files here");
 
-    lbDateRange.move(550, 30, 100, 30);
-    lbDateRange.text("Dates");
-    ebDateRange.move(665, 30, 200, 30);
-    ebDateRange.text("ALL");
+    // lbDateRange.move(550, 30, 100, 30);
+    // lbDateRange.text("Dates");
+    // // ebDateRange.move(665, 30, 200, 30);
+    // // ebDateRange.text("ALL");
+    // dbDateStart.move(665, 30, 200, 30);
+    // dbDateStart.text("Picker");
 
     // strategy display
     lb.move(10, 100, 1100, 450);
@@ -94,4 +104,41 @@ void cGUI::constructMenu()
                  });
 
     mbar.append("File", mfile);
+}
+
+void cGUI::constructDatePicker()
+{
+    int x = 500;
+    lbDateRange.move(x, 30, 100, 30);
+    lbDateRange.text("Dates from");
+
+    x += 120;
+    dbDateStart.move(x, 30, 130, 30);
+
+    x += 180;
+    lbDateRange2.move(x, 30, 50, 30);
+    lbDateRange2.text("to");
+
+    x += 70;
+    dbDateEnd.move(x, 30, 130, 30);
+
+    fm.events().datePick(
+        [this](int id, LPNMDATETIMECHANGE date)
+        {
+            std::string which;
+            if (id == dbDateStart.id())
+                which = "start";
+            else
+                which = "end";
+
+            if (date->dwFlags == GDT_NONE)
+            {
+                std::cout << which << " date disabled\n";
+                return;
+            }
+            std::cout << which << " date changed to "
+                      << date->st.wYear << "/"
+                      << date->st.wMonth << "/"
+                      << date->st.wDay << "\n";
+        });
 }
